@@ -8,69 +8,68 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-// The game is rendered here.
-
+// This class represents the panel where the game is rendered.
 public class GamePanel extends JPanel {
+    // Constants for "Game Over!" and replay instructions
     private static final String OVER = "Game Over!";
     private static final String REPLAY = "R to replay";
 
-    //<a href="https://www.freepik.com/free-photos-vectors/tree">
-    // Tree vector created by upklyak - www.freepik.com</a>
+    // Image source for the background
     private static final String imagePath = "src/data/images/background.jpg";
-    private WSGame game;
-    private Image bgImg;
+    private WSGame game; // The game instance to be displayed
+    private Image bgImg; // Background image
 
-    // Constructs a game panel
-    // effects:  sets size and background colour of panel,
-    //           updates this with the game to be displayed
+    // Constructor
     public GamePanel(WSGame g) {
-        setPreferredSize(new Dimension(WSGame.WIDTH, WSGame.HEIGHT));
-        this.game = g;
+        setPreferredSize(new Dimension(WSGame.WIDTH, WSGame.HEIGHT)); // Set panel size
+        this.game = g; // Initialize the game instance
         try {
-            bgImg = ImageIO.read(new File(imagePath)).getScaledInstance(WSGame.WIDTH,WSGame.HEIGHT,Image.SCALE_DEFAULT);
+            // Load and scale the background image
+            bgImg = ImageIO.read(new File(imagePath)).getScaledInstance(WSGame.WIDTH, WSGame.HEIGHT, Image.SCALE_DEFAULT);
         } catch (IOException e) {
-            System.out.print("fail to load background image");
+            System.out.print("Failed to load background image");
             e.printStackTrace();
         }
     }
 
+    // This method is called when the panel is being repainted
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        g.drawImage(bgImg,0,0,null);
+        // Draw the background image
+        g.drawImage(bgImg, 0, 0, null);
+
+        // Render the game elements
         renderGame(g);
 
-        if (game.isOver()){
+        // If the game is over, draw the "game over" message and replay instructions
+        if (game.isOver()) {
             gameOver(g);
         }
     }
 
     // Draws the "game over" message and replay instructions
-    // modifies: g
-    // effects:  draws "game over" and replay instructions onto g
     private void gameOver(Graphics g) {
-        Color saved = g.getColor();
-        g.setColor(new Color( 0, 0, 0));
-        g.setFont(new Font("Arial", 20, 20));
+        Color saved = g.getColor(); // Save the current color
+        g.setColor(new Color(0, 0, 0)); // Set color for the message
+        g.setFont(new Font("Arial", Font.PLAIN, 20)); // Set font for the message
         FontMetrics fm = g.getFontMetrics();
+        // Center the "Game Over!" message and replay instructions vertically
         centreString(OVER, g, fm, WSGame.HEIGHT / 2);
         centreString(REPLAY, g, fm, WSGame.HEIGHT / 2 + 40);
-        g.setColor(saved);
+        g.setColor(saved); // Restore the original color
     }
 
-    // Draws the game
-    // modifies: g
-    // effects:  the game is drawn onto the Graphics object g
+    // Draws the game elements
     private void renderGame(Graphics g) {
-        game.render(g);
+        game.render(g); // Delegate the rendering to the game instance
     }
 
-    // Centres a string on the screen
-    // modifies: g
-    // effects:  centres the string str horizontally onto g at vertical position yPos
+    // Centers a string on the screen horizontally
     private void centreString(String str, Graphics g, FontMetrics fm, int yPos) {
         int width = fm.stringWidth(str);
+        // Calculate the x-coordinate to center the string
         g.drawString(str, (WSGame.WIDTH - width) / 2, yPos);
     }
 }
